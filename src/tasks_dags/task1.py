@@ -1,8 +1,15 @@
-def create_variable():
-    from cmask_utils.logger import TasksLogger
-    logger = TasksLogger("TASK LOGGING")
-    logger.setLoggerLevel('DEBUG')
-    logger.info("Iniciando criação da variável")
-    value = "Olá do task1!"
-    logger.info(f"Variável criada: {value}")
-    return value
+from tasks_dags.task_base import TaskBase
+
+class Task1(TaskBase):
+    def __init__(self, index: int):
+        super().__init__(index)
+
+    def create_variable(self):
+        value = f"Olá do task1! Index: {self.index}"
+        self.logger.info(f"Variável criada: {value}")
+        return value
+
+def task1_callable():
+    from tasks_dags.task1 import Task1
+    task = Task1(1)
+    return task.create_variable()
