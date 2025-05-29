@@ -16,52 +16,62 @@ from airflow.operators.python import PythonVirtualenvOperator
 
 ## ⚙️ Step-by-Step Guide
 
-### 1. Create a Virtual Environment (venv)
 
-Create your virtual environment locally in the desired folder:
+### 1. Define the Path in Your DAG
 
-```bash
-python3 -m venv /opt/airflow/projects/YOUR_PROJECT/venv
-```
-
-### 2. Activate the Virtual Environment
-
-Activate the environment to install required dependencies:
-
-```bash
-source /opt/airflow/projects/YOUR_PROJECT/venv/bin/activate
-```
-
-### 3. Install Required Dependencies
-
-Inside the virtual environment, install the necessary packages:
-
-```bash
-pip install pandas requests numpy  # example packages
-```
-
-You can also use a `requirements.txt` file:
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Define the Path in Your DAG
-
-In your DAG file, define the path to your virtualenv:
+In your DAG file, define the path to your virtualenv, you don't need to create it in your environment beforehand, as Airflow will automatically handle its creation during execution.:
 
 ```python
-venv_path = "/opt/airflow/projects/deter_cmask_data_flow/venv"
+venv_path = "/opt/airflow/venv/inpe/pantanal_deter_cmask_data_flow/venv"
 ```
 
-### 5. Use the `PythonVirtualenvOperator` in Tasks
+### 2. Difine the requirements
 
-You can now create tasks using the operator:
+It is necessary to store all the parameters required for the DAG execution in a local variable, so that Airflow can properly install the dependencies during execution.
+
+```python
+requirements = [
+    "requests",
+    "psycopg2-binary",
+    "geopandas==0.13.2",
+    "fiona==1.9.6",
+    "geoalchemy2",
+    "rasterstats",
+    "libpysal",
+    "beautifulsoup4",
+    "rasterio",
+    "apache-airflow==2.10.5"
+]
+```
+
+### 3. Use the `PythonVirtualenvOperator` in Tasks
+
+You can now create tasks using the operator. 
+In the first call to the PythonVirtualenvOperator, you need 
+to provide the requirements parameter so that Airflow can 
+install the previously defined packages:
 
 ```python
 task_1 = PythonVirtualenvOperator(
     task_id="1_trigger_task",
+    requirements=requirements,
     python_callable=task_callable_01,
+    system_site_packages=True,
+    op_kwargs={"biome": biome},
+    venv_cache_path=venv_path
+)
+```
+
+In subsequent calls to the PythonVirtualenvOperator, 
+it will no longer be necessary to pass the requirements 
+parameter, as all dependencies will have already been 
+installed in the virtual environment, which will be 
+reused in the following calls.
+
+```python
+task_2 = PythonVirtualenvOperator(
+    task_id='2_create_tables_task',
+    python_callable=task_callable_02,
     system_site_packages=True,
     op_kwargs={"biome": biome},
     venv_cache_path=venv_path
