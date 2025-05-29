@@ -1,0 +1,17 @@
+site_name: TerraBrasilis Airflow Guide
+
+nav:
+  - Home: index.md
+  - Best Practices: best-practices.md
+  - Pep8: pep8.md
+  - PythonVirtualenvOperator: python_virtualenv_operator.md
+
+theme:
+  name: material
+  logo: assets/logo.png
+  favicon: assets/favicon.ico
+
+extra_css:
+  - assets/extra.css
+
+dev_addr: 127.0.0.1:8002
