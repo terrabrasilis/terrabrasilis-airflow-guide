@@ -4,6 +4,8 @@
 
 PEP8 is the **Python Enhancement Proposal 8**, which defines the official style guide for writing Python code. It provides a set of conventions and best practices to make Python code more readable, consistent, and maintainable across projects and teams.
 
+---
+
 ## ❓ Why Use PEP8?
 
 - **👀 Improves readability:** Code that follows a consistent style is easier to read and understand.
@@ -70,6 +72,8 @@ def greet_user(name):
     else:
         print("Hello, Guest!")
 ```
+
+---
 
 ## 📌 Summary
 
